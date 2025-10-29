@@ -1,4 +1,3 @@
-import { Offboarding } from "@/app/offboarding/columns";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -12,13 +11,16 @@ export async function GET() {
                 fetchedAt: {
                     gte: startOfToday
                 }
-            }
+            },
+            orderBy: {
+                fetchedAt: 'desc',
+            },
         })
 
         const tableData = (response?.data as any[] ?? []).map((result: any) => {
-            const completed_workflow = result?.workflow_report.filter((wr:any) => wr["Task Status"] === "Completed").map((wr: any) => wr["Task Name"]);
-            const pending_workflow = result?.workflow_report.filter((wr:any) => wr["Task Status"] != "Completed").map((wr: any) => wr["Task Name"]);
-            const dateOfLastPay = result?.workflow_report.find((wr:any)=> wr["Task Name"] === "Full and Final Settlement")
+            const completed_workflow = result?.workflow_report.filter((wr: any) => wr["Task Status"] === "Completed").map((wr: any) => wr["Task Name"]);
+            const pending_workflow = result?.workflow_report.filter((wr: any) => wr["Task Status"] != "Completed").map((wr: any) => wr["Task Name"]);
+            const dateOfLastPay = result?.workflow_report.find((wr: any) => wr["Task Name"] === "Full and Final Settlement")
             return {
                 name: result["Employee Name"],
                 department_manager: result["Direct Manager Name"],
