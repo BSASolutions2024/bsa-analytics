@@ -10,7 +10,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             authorization: { params: { scope: "openid profile email" } },
         }),
     ],
-    session: { strategy: "jwt", maxAge: 10 },
+    session: { strategy: "jwt", maxAge: 60 * 60 },
     trustHost: true,
     secret: process.env.AUTH_SECRET,
 })
