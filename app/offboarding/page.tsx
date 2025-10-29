@@ -1,5 +1,4 @@
 
-
 import { columns, Offboarding } from "./columns";
 import { OffboardingDataTable } from "./data-table";
 
