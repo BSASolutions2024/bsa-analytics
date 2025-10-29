@@ -14,6 +14,7 @@ export default auth(async (req) => {
     const token = await getToken({
         req,
         secret: process.env.AUTH_SECRET,
+        cookieName: cookieKey,
     });
 
 
