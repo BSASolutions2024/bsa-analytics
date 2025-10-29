@@ -39,8 +39,8 @@ export default auth(async (req) => {
 
 export const config = {
     matcher: [
-        "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
-        "/api/v1/:path*",
-        "/login"
+        "/((?!api/auth|api|_next/static|_next/image|favicon.ico).*)",
+        "/login",
+        "/offboarding"
     ]
 }

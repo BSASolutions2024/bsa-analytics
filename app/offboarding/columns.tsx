@@ -1,3 +1,4 @@
+"use client"
 import { ColumnDef } from "@tanstack/react-table"
 
 export type Offboarding = {
@@ -8,7 +9,7 @@ export type Offboarding = {
     date_of_initiation: Date
     completed_workflow: string[]
     pending_workflow: string[]
-    date_of_last_pay_release: Date
+    date_of_last_pay_release?: Date
 }
 
 export const columns: ColumnDef<Offboarding>[] = [
@@ -34,11 +35,27 @@ export const columns: ColumnDef<Offboarding>[] = [
     },
     {
         accessorKey: "completed_workflow",
-        header: "Completed Workflow"
+        header: "Completed Workflow",
+        cell: ({ row }) => {
+            const values = row.getValue("completed_workflow") as string[];
+            return (
+                <div className="whitespace-pre-line font-medium">
+                    {values.join("\n")}
+                </div>
+            );
+        },
     },
     {
         accessorKey: "pending_workflow",
-        header: "Pending Workflow"
+        header: "Pending Workflow",
+        cell: ({ row }) => {
+            const values = row.getValue("pending_workflow") as string[];
+            return (
+                <div className="whitespace-pre-line font-medium">
+                    {values.join("\n")}
+                </div>
+            );
+        },
     },
     {
         accessorKey: "date_of_last_pay_release",

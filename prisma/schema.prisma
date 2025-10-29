@@ -1,0 +1,30 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model OffboardingAnalytics {
+  id                            String    @id @default(uuid()) @db.Uuid
+  source                        String?
+  period                        String?
+  offboarding_report_request_id String
+  offboarding_report_json       Json
+  workflow_report_request_id    String
+  workflow_report_json          Json
+  data                          Json
+  fetchedAt                     DateTime  @default(now())
+  updateAt                      DateTime  @updatedAt
+}
+
+
