@@ -6,7 +6,7 @@ export default async function Page() {
         cache: "no-store",
     });
     const result = await res.json();
-    const data: Offboarding[] = result.response
+    const data: Offboarding[] = result?.response ?? []
     return (
         <OffboardingDataTable columns={columns} data={data} />
     )
