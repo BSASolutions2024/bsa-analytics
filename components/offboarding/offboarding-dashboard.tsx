@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function OffboardingDashboard() {
     const [data, setData] = useState<Offboarding[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         async function fetchData() {
@@ -16,6 +17,8 @@ export default function OffboardingDashboard() {
                 setData(result.response ?? []); // set fetched data
             } catch (err) {
                 console.error("Error fetching offboarding data:", err);
+            } finally {
+                setIsLoading(false)
             }
         }
 
@@ -24,7 +27,7 @@ export default function OffboardingDashboard() {
 
     return (
         <div>
-            <OffboardingDataTable columns={columns} data={data} />
+            <OffboardingDataTable columns={columns} data={data} isLoading={isLoading}/>
         </div>
     )
 }

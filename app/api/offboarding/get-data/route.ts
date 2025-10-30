@@ -17,7 +17,11 @@ export async function GET() {
             const pending_workflow = result?.workflow_report.filter((wr: any) => wr["Task Status"] != "Completed").map((wr: any) => wr["Task Name"]);
             const dateOfLastPay = result?.workflow_report.find((wr: any) => wr["Task Name"] === "Full and Final Settlement")
             return {
-                name: result["Employee Name"],
+                employee_id: result["Employee Id"],
+                employee_name: result["Employee Name"],
+                separation_category: result["Final Separation Category"],
+                separation_reason: result["Final Separation Reason"],
+                client_name: result["Client Name Cost Center Name"],
                 department_manager: result["Direct Manager Name"],
                 sla: result["SLA"],
                 last_working_day: result["Final Last Working Day"],

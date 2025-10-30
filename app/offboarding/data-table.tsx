@@ -6,11 +6,13 @@ import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    isLoading: boolean
 }
 
 export function OffboardingDataTable<TData, TValue>({
     columns,
-    data
+    data,
+    isLoading
 }: DataTableProps<TData, TValue>) {
     const table = useReactTable({
         data,
@@ -19,7 +21,7 @@ export function OffboardingDataTable<TData, TValue>({
     })
 
     return (
-        <div className="overflow-hidden rounded-md border">
+        <div className="overflow-x-auto rounded-md border">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -40,7 +42,13 @@ export function OffboardingDataTable<TData, TValue>({
                     ))}
                 </TableHeader>
                 <TableBody>
-                    {table.getRowModel().rows?.length ? (
+                    {isLoading ? (
+                        <tr>
+                            <td colSpan={columns.length} className="text-center p-4">
+                                Loading…
+                            </td>
+                        </tr>
+                    ) : table.getRowModel().rows?.length ? (
                         table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}

@@ -1,8 +1,13 @@
 "use client"
+import { Badge } from "@/components/ui/badge"
 import { ColumnDef } from "@tanstack/react-table"
 
 export type Offboarding = {
-    name: string
+    employee_id: string
+    employee_name: string
+    separation_category: string
+    separation_reason: string
+    client_name: string
     department_manager: string
     sla: number
     last_working_day: Date
@@ -14,8 +19,24 @@ export type Offboarding = {
 
 export const columns: ColumnDef<Offboarding>[] = [
     {
-        accessorKey: 'name',
-        header: "Name"
+        accessorKey: 'employee_id',
+        header: "Employee ID"
+    },
+    {
+        accessorKey: 'employee_name',
+        header: "Employee Name"
+    },
+    {
+        accessorKey: 'separation_category',
+        header: "Separation Category"
+    },
+    {
+        accessorKey: 'separation_reason',
+        header: "Separation Reason"
+    },
+    {
+        accessorKey: 'client_name',
+        header: "Client/Department Name"
     },
     {
         accessorKey: "department_manager",
@@ -39,8 +60,12 @@ export const columns: ColumnDef<Offboarding>[] = [
         cell: ({ row }) => {
             const values = row.getValue("completed_workflow") as string[];
             return (
-                <div className="whitespace-pre-line font-medium">
-                    {values.join("\n")}
+                <div className="flex flex-wrap gap-1">
+                    {values.map((val: string, idx: number) => (
+                        <Badge key={idx} className="bg-green-800 text-white dark:bg-green-600">
+                            {val}
+                        </Badge>
+                    ))}
                 </div>
             );
         },
@@ -51,8 +76,12 @@ export const columns: ColumnDef<Offboarding>[] = [
         cell: ({ row }) => {
             const values = row.getValue("pending_workflow") as string[];
             return (
-                <div className="whitespace-pre-line font-medium">
-                    {values.join("\n")}
+                <div className="flex flex-wrap gap-1">
+                    {values.map((val: string, idx: number) => (
+                        <Badge key={idx} variant="destructive">
+                            {val}
+                        </Badge>
+                    ))}
                 </div>
             );
         },
