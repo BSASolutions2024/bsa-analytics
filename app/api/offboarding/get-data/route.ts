@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -7,13 +7,8 @@ export async function GET() {
         startOfToday.setHours(0, 0, 0, 0);
 
         const response = await prisma.offboardingAnalytics.findFirst({
-            where: {
-                fetchedAt: {
-                    gte: startOfToday
-                }
-            },
             orderBy: {
-                fetchedAt: 'desc',
+                fetchedAt: 'desc', // latest first
             },
         })
 
@@ -32,6 +27,7 @@ export async function GET() {
                 date_of_last_pay_release: dateOfLastPay["Task Status"] === "Completed" ? dateOfLastPay["Task Completion Date"] : "No Data"
             }
         })
+
 
         return NextResponse.json({
             success: true,
