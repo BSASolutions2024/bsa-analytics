@@ -5,6 +5,21 @@ import { NextResponse } from "next/server";
 const whitelist = process.env.WHITELISTED_EMAILS!.split(",");
 
 export default auth(async (req) => {
+    const { pathname } = req.nextUrl;
+
+    // ✅ Allow Auth routes to pass through
+    if (pathname.startsWith("/api/auth")) {
+        return NextResponse.next();
+    }
+
+    // ✅ 1. Check for static CRON token
+    const authHeader = req.headers.get("authorization");
+    const staticToken = `Bearer ${process.env.CRON_SECRET_TOKEN}`;
+
+    if (authHeader === staticToken) {
+        console.log("✅ Authorized via CRON static token");
+        return NextResponse.next();
+    }
 
     const cookieKey =
         process.env.NODE_ENV === "production"
@@ -40,6 +55,7 @@ export default auth(async (req) => {
 
 export const config = {
     matcher: [
+        "/api/:path*",
         "/login",
         "/offboarding"
     ]

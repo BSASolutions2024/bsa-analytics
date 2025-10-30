@@ -20,11 +20,17 @@ export type Offboarding = {
 export const columns: ColumnDef<Offboarding>[] = [
     {
         accessorKey: 'employee_id',
-        header: "Employee ID"
+        header: "Employee ID",
+        cell: ({ row }) => (
+            <div className="min-w-[100px] truncate">{row.getValue("employee_id")}</div>
+        ),
     },
     {
         accessorKey: 'employee_name',
-        header: "Employee Name"
+        header: "Employee Name",
+        cell: ({ row }) => (
+            <div className="min-w-[100px] truncate">{row.getValue("employee_name")}</div>
+        ),
     },
     {
         accessorKey: 'separation_category',
@@ -44,7 +50,7 @@ export const columns: ColumnDef<Offboarding>[] = [
     },
     {
         accessorKey: "sla",
-        header: "SLA"
+        header: "SLA",
     },
     {
         accessorKey: "last_working_day",

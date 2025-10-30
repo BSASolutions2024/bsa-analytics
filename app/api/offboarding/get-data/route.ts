@@ -30,7 +30,15 @@ export async function GET() {
                 pending_workflow,
                 date_of_last_pay_release: dateOfLastPay["Task Status"] === "Completed" ? dateOfLastPay["Task Completion Date"] : "No Data"
             }
-        })
+        }).sort((a, b) => {
+            const parseDate = (d: string) => {
+                if (!d) return 0;
+                const [day, month, year] = d.split("-");
+                return new Date(`${year}-${month}-${day}`).getTime();
+            };
+
+            return parseDate(b.last_working_day) - parseDate(a.last_working_day);
+        });
 
 
         return NextResponse.json({
