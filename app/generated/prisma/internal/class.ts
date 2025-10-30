@@ -33,6 +33,10 @@ const config: runtime.GetPrismaClientConfig = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -46,6 +50,7 @@ const config: runtime.GetPrismaClientConfig = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -54,8 +59,8 @@ const config: runtime.GetPrismaClientConfig = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel OffboardingAnalytics {\n  id                            String   @id @default(uuid()) @db.Uuid\n  source                        String?\n  period                        String?\n  offboarding_report_request_id String\n  offboarding_report_json       Json\n  workflow_report_request_id    String\n  workflow_report_json          Json\n  data                          Json\n  fetchedAt                     DateTime @default(now())\n  updateAt                      DateTime @updatedAt\n}\n",
-  "inlineSchemaHash": "bcef06ef8017dd69d965ca148432e9c4882083691c3f0fb31d1cc5e44f6d2767",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n  output        = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel OffboardingAnalytics {\n  id                            String   @id @default(uuid()) @db.Uuid\n  source                        String?\n  period                        String?\n  offboarding_report_request_id String\n  offboarding_report_json       Json\n  workflow_report_request_id    String\n  workflow_report_json          Json\n  data                          Json\n  fetchedAt                     DateTime @default(now())\n  updateAt                      DateTime @updatedAt\n}\n",
+  "inlineSchemaHash": "331b54c04c0f036791b2f3f803e85182d1c9f7ca7f6c2c53177a4f53c9336c9b",
   "copyEngine": true,
   "runtimeDataModel": {
     "models": {},
