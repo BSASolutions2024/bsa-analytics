@@ -3,8 +3,8 @@ name: Scheduled API Call
 on:
   schedule:
     # Runs at 00:00 UTC on the 1st day of every month
-    - cron: "0 21 * * *"
-  workflow_dispatch: # allow manual trigger
+    - cron: "0 0 1 * *" #- cron: "0 0 1 * *" change to 1st day of month
+  workflow_dispatch: # allow manual triggerZ
 
 jobs:
   call-api:

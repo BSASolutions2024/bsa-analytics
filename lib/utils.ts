@@ -40,3 +40,27 @@ export const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
+
+export function formatDate(dateInput: string | Date): string {
+  let date: Date;
+
+  if (typeof dateInput === "string") {
+    // Split dd-mm-yyyy string
+    const [day, month, year] = dateInput.split("-").map(Number);
+    date = new Date(year, month - 1, day); // JS months are 0-indexed
+  } else {
+    date = dateInput;
+  }
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}-${month}-${year}`;
+}
+
+export function parseDateString(dateString: string): Date {
+  if (!dateString) return new Date(0);
+  const [day, month, year] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}

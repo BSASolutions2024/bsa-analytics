@@ -1,6 +1,12 @@
 "use client"
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { formatDate, parseDateString } from "@/lib/utils"
 import { ColumnDef } from "@tanstack/react-table"
+import { BadgeCheckIcon, BadgeMinus } from "lucide-react"
 
 export type Offboarding = {
     employee_id: string
@@ -50,15 +56,43 @@ export const columns: ColumnDef<Offboarding>[] = [
     },
     {
         accessorKey: "sla",
-        header: "SLA",
+        header: () => <div className="text-center">SLA</div>,
+        cell: ({ row }) => (
+            <div className="text-center">{row.getValue("sla")}</div>
+        ),
     },
     {
         accessorKey: "last_working_day",
-        header: "Last Working Day"
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Last Working Day" />
+        ),
+        sortingFn: (rowA, rowB, columnId) => {
+            const a = parseDateString(rowA.getValue(columnId));
+            const b = parseDateString(rowB.getValue(columnId));
+            return a.getTime() - b.getTime();
+        },
     },
     {
         accessorKey: "date_of_initiation",
-        header: "Date of Initiation"
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Date of Initiation" />
+        ),
+        sortingFn: (rowA, rowB, columnId) => {
+            const a = parseDateString(rowA.getValue(columnId));
+            const b = parseDateString(rowB.getValue(columnId));
+            return a.getTime() - b.getTime();
+        },
+        filterFn: (row, columnId, filterValue) => {
+            // filterValue = { from: Date, to: Date }
+            const date = parseDateString(row.getValue(columnId));
+            const from = filterValue?.from;
+            const to = filterValue?.to;
+
+            if (from && date < from) return false;
+            if (to && date > to) return false;
+            return true;
+        },
+
     },
     {
         accessorKey: "completed_workflow",
@@ -66,12 +100,24 @@ export const columns: ColumnDef<Offboarding>[] = [
         cell: ({ row }) => {
             const values = row.getValue("completed_workflow") as string[];
             return (
-                <div className="flex flex-wrap gap-1">
-                    {values.map((val: string, idx: number) => (
-                        <Badge key={idx} className="bg-green-800 text-white dark:bg-green-600">
-                            {val}
-                        </Badge>
-                    ))}
+                <div className="flex justify-center">
+                    {values.length === 0 ? (
+                        <Badge className="cursor-pointer" variant="outline">Completed</Badge>
+                    ) : (
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Badge className="bg-green-800 cursor-pointer">{values.length}</Badge>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto flex flex-col gap-1">
+                                {values.map((val: string, idx: number) => (
+                                    <Badge key={idx} className="bg-green-800 text-white dark:bg-green-600">
+                                        <BadgeCheckIcon />
+                                        {val}
+                                    </Badge>
+                                ))}
+                            </PopoverContent>
+                        </Popover>
+                    )}
                 </div>
             );
         },
@@ -82,12 +128,24 @@ export const columns: ColumnDef<Offboarding>[] = [
         cell: ({ row }) => {
             const values = row.getValue("pending_workflow") as string[];
             return (
-                <div className="flex flex-wrap gap-1">
-                    {values.map((val: string, idx: number) => (
-                        <Badge key={idx} variant="destructive">
-                            {val}
-                        </Badge>
-                    ))}
+                <div className="flex justify-center">
+                    {values.length === 0 ? (
+                        <Badge className="cursor-pointer" variant="secondary">Completed</Badge>
+                    ) : (
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Badge className="cursor-pointer" variant="destructive">{values.length}</Badge>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto flex flex-col gap-1">
+                                {values.map((val: string, idx: number) => (
+                                    <Badge key={idx} variant="destructive">
+                                        <BadgeMinus />
+                                        {val}
+                                    </Badge>
+                                ))}
+                            </PopoverContent>
+                        </Popover>
+                    )}
                 </div>
             );
         },
