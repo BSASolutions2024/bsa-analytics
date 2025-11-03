@@ -33,32 +33,41 @@ export const columns: ColumnDef<Offboarding>[] = [
     },
     {
         accessorKey: 'employee_name',
-        header: "Employee Name",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Employee Name" />
+        ),
         cell: ({ row }) => (
             <div className="min-w-[100px] truncate">{row.getValue("employee_name")}</div>
         ),
     },
     {
         accessorKey: 'separation_category',
-        header: "Separation Category"
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Separation Category" />
+        ),
     },
     {
         accessorKey: 'separation_reason',
-        header: "Separation Reason"
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Separation Reason" />
+        ),
     },
     {
         accessorKey: 'client_name',
-        header: "Client/Department Name"
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Client/Department Name" />
+        ),
     },
     {
         accessorKey: "department_manager",
-        header: "Department Manager"
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Department Manager" />
+        ),
     },
     {
         accessorKey: "sla",
-        header: () => <div className="text-center">SLA</div>,
-        cell: ({ row }) => (
-            <div className="text-center">{row.getValue("sla")}</div>
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="SLA" />
         ),
     },
     {
@@ -96,7 +105,7 @@ export const columns: ColumnDef<Offboarding>[] = [
     },
     {
         accessorKey: "completed_workflow",
-        header: "Completed Workflow",
+        header: () => <p className="text-center">Completed Workflow</p>,
         cell: ({ row }) => {
             const values = row.getValue("completed_workflow") as string[];
             return (
@@ -124,7 +133,7 @@ export const columns: ColumnDef<Offboarding>[] = [
     },
     {
         accessorKey: "pending_workflow",
-        header: "Pending Workflow",
+        header: () => <p className="text-center">Pending Workflow</p>,
         cell: ({ row }) => {
             const values = row.getValue("pending_workflow") as string[];
             return (

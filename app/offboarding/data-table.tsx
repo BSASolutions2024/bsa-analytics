@@ -23,20 +23,23 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     SortingState,
-    useReactTable
+    useReactTable,
+    VisibilityState
 } from "@tanstack/react-table"
 import { useEffect, useState } from "react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
-    isLoading: boolean
+    isLoading: boolean,
+    onFilteredDataChange?: (filtered: TData[]) => void
 }
 
 export function OffboardingDataTable<TData, TValue>({
     columns,
     data,
-    isLoading
+    isLoading,
+    onFilteredDataChange
 }: DataTableProps<TData, TValue>) {
     const [filteredData, setFilteredData] = useState<any>([])
     const [globalFilter, setGlobalFilter] = useState<any>([])
@@ -44,6 +47,7 @@ export function OffboardingDataTable<TData, TValue>({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
         []
     )
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
     const table = useReactTable({
         data,
@@ -54,20 +58,49 @@ export function OffboardingDataTable<TData, TValue>({
         getFilteredRowModel: getFilteredRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onGlobalFilterChange: setGlobalFilter,
         state: {
             columnFilters,
             sorting,
             globalFilter,
+            columnVisibility
         },
-        onGlobalFilterChange: setGlobalFilter
     })
 
     useEffect(() => {
-        setFilteredData(table.getFilteredRowModel().rows.map(row => row.original));
+        let isMounted = true;
+
+        const visibleColumns = table
+            .getAllLeafColumns()
+            .filter(col => col.getIsVisible())
+            .map(col => col.id);
+
+        const filtered = table.getSortedRowModel().rows.map(row => {
+            const rowData: Record<string, any> = {};
+            const original = row.original as Record<string, any>;
+
+            visibleColumns.forEach(colId => {
+                rowData[colId] = original[colId];
+            });
+
+            return rowData;
+        });
+
+        onFilteredDataChange?.(table.getSortedRowModel().rows.map(row => row.original as TData))
+
+        if (isMounted) setFilteredData(filtered);
+
+        return () => {
+            isMounted = false;
+        };
     }, [
         table.options.data,
         globalFilter,
-        sorting,]);
+        sorting,
+        columnFilters,
+        columnVisibility
+    ]);
 
     return (
         <div className="flex flex-col gap-4">
