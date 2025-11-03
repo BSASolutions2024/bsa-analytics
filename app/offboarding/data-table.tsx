@@ -13,7 +13,7 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table"
-import { downloadExcel } from "@/lib/utils"
+import { downloadExcel, formatDateWithTime } from "@/lib/utils"
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -63,11 +63,9 @@ export function OffboardingDataTable<TData, TValue>({
     })
 
     useEffect(() => {
-        const filtered = table.getFilteredRowModel().rows.map(row => row.original);
-        setFilteredData(filtered);
+        setFilteredData(table.getFilteredRowModel().rows.map(row => row.original));
     }, [
         table.options.data,
-        table.getFilteredRowModel().rows.length,
         globalFilter,
         sorting,]);
 
@@ -86,7 +84,7 @@ export function OffboardingDataTable<TData, TValue>({
                     <DateRangeFilter column={table.getColumn("date_of_initiation")} />
                     <Button className="w-auto self-end" onClick={() =>
                         downloadExcel(filteredData,
-                            "table-data.xlsx"
+                            `Offboarding-${formatDateWithTime(new Date())}.xlsx`
                         )}>Export</Button>
                 </div>
             </div>
