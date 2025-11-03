@@ -2,13 +2,29 @@
 
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 import { DateRangeFilter } from "@/components/date-range-picker"
-import { MonthYearPicker } from "@/components/month-year-picker"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
+} from "@/components/ui/table"
 import { downloadExcel } from "@/lib/utils"
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table"
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable
+} from "@tanstack/react-table"
 import { useEffect, useState } from "react"
 
 interface DataTableProps<TData, TValue> {
@@ -29,11 +45,6 @@ export function OffboardingDataTable<TData, TValue>({
         []
     )
 
-    const now = new Date();
-    const defaultValue = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-
-    const [selectedDate, setSelectedDate] = useState<string>(defaultValue);
-
     const table = useReactTable({
         data,
         columns,
@@ -52,11 +63,11 @@ export function OffboardingDataTable<TData, TValue>({
     })
 
     useEffect(() => {
-        setFilteredData(
-            table.getFilteredRowModel().rows.map(row => row.original)
-        );
-    }, [table, // stable reference
-        columnFilters, // re-run when filters change
+        const filtered = table.getFilteredRowModel().rows.map(row => row.original);
+        setFilteredData(filtered);
+    }, [
+        table.options.data,
+        table.getFilteredRowModel().rows.length,
         globalFilter,
         sorting,]);
 
@@ -73,7 +84,10 @@ export function OffboardingDataTable<TData, TValue>({
                 <div className="flex flex-row space-x-2">
                     <Label htmlFor="terms">Data as of:</Label>
                     <DateRangeFilter column={table.getColumn("date_of_initiation")} />
-                    <Button className="w-auto self-end" onClick={() => downloadExcel(filteredData, "table-data.xlsx")}>Export</Button>
+                    <Button className="w-auto self-end" onClick={() =>
+                        downloadExcel(filteredData,
+                            "table-data.xlsx"
+                        )}>Export</Button>
                 </div>
             </div>
             <div className="overflow-x-auto rounded-md border">
