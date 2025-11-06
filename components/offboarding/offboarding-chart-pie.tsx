@@ -20,7 +20,7 @@ const chartConfig = {
         color: "var(--chart-2)",
     },
     transfer: {
-        label: "Involuntary",
+        label: "Transfer",
         color: "var(--chart-3)",
     },
 } satisfies ChartConfig
