@@ -4,6 +4,7 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
     try {
+        console.log("Data Syncing ...")
         const {
             requestId: offboardingRequestId,
             reportData: offboardingReportData

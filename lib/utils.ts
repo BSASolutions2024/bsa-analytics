@@ -74,3 +74,9 @@ export function formatDateWithTime(date = new Date()) {
 
   return `${year}-${month}-${day}-${hours}${minutes}`;
 }
+
+export const separationColorMap: Record<string, string> = {
+  voluntary: "var(--color-voluntary)",
+  involuntary: "var(--color-involuntary)",
+  transfer: "var(--color-transfer)",
+}

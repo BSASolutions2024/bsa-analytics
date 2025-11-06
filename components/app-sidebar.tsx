@@ -1,17 +1,17 @@
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
-import { LogOut } from "lucide-react"
+import { DoorOpen, LogOut, QrCode } from "lucide-react"
 import Link from "next/link"
 
 const items = [
   {
     title: "Offboarding",
     url: "offboarding",
-    icon: LogOut,
+    icon: DoorOpen,
   },
   {
     title: "Surveys",
     url: "surveys",
-    icon: LogOut,
+    icon: QrCode,
   },
 ]
 export function AppSidebar() {

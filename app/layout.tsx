@@ -7,6 +7,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { headers } from "next/headers";
 import SidebarWrapper from "@/components/sidebar-wrapper";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({
             </SidebarWrapper>
           </SidebarProvider>
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   );

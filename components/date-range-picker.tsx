@@ -5,14 +5,22 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, X } from "lucide-react";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function DateRangeFilter({ column }: { column: any }) {
+    const [isMounted, setIsMounted] = useState(false);
     const [dateRange, setDateRange] = useState({
         from: undefined,
         to: undefined,
     });
 
+    
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) return null; 
+    
     const handleClear = (e: React.MouseEvent) => {
         e.stopPropagation(); // ✅ prevents opening the popover
         setDateRange({ from: undefined, to: undefined });

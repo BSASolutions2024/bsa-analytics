@@ -40,9 +40,9 @@ export async function GET() {
             return parseDate(b.last_working_day) - parseDate(a.last_working_day);
         });
 
-
         return NextResponse.json({
             success: true,
+            fetchedAt: response?.fetchedAt,
             response: tableData
         });
     } catch (error: any) {

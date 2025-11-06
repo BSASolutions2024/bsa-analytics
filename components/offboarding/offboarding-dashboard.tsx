@@ -9,55 +9,77 @@ import { MonthYearPicker } from "../month-year-picker";
 import { Input } from "../ui/input";
 import { OffboardingChartPieInteractive } from "./offboarding-chart-pie";
 import { OffboardingAnalyticsCard } from "./offboarding-analytics";
+import { RefreshCw } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Spinner } from "../ui/spinner";
 
 export default function OffboardingDashboard() {
+    const router = useRouter();
     const [data, setData] = useState<Offboarding[]>([]);
+    const [fetchedAt, setFetchedAt] = useState<String>()
     const [isLoading, setIsLoading] = useState(true);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [filteredData, setFilteredData] = useState<Offboarding[]>([])
 
-    const now = new Date();
-    const defaultValue = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-
-    const [selectedDate, setSelectedDate] = useState<string>(defaultValue);
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const res = await fetch(`/api/offboarding/get-data`, {
-                    cache: "no-store",
-                });
-                const result = await res.json();
-                setData(result.response ?? []); // set fetched data
-            } catch (err) {
-                console.error("Error fetching offboarding data:", err);
-            } finally {
-                setIsLoading(false)
+    const fetchData = async () => {
+        try {
+            const res = await fetch(`/api/offboarding/get-data`, {
+                cache: "no-store",
+            });
+            const result = await res.json();
+            if (res.ok) {
+                setFetchedAt((new Date(result.fetchedAt)).toDateString() + " " + (new Date(result.fetchedAt)).toLocaleTimeString())
+                setData(result.response ?? []);
             }
+        } catch (err) {
+            console.error("Error fetching offboarding data:", err);
+        } finally {
+            setIsLoading(false)
         }
-
+    }
+    useEffect(() => {
         fetchData();
     }, [])
 
+    const syncOffboarding = async () => {
+        setIsSyncing(true)
+        try {
+            const res = await fetch('/api/offboarding/sync-data')
+
+            if (res.ok) {
+                await fetchData()
+                toast.success("Data is sync successfully")
+                router.refresh();
+            }
+        } catch (error: any) {
+            toast.error("Something went wrong", {
+                description: error.message
+            })
+        } finally {
+            setIsSyncing(false)
+        }
+    }
+
+    const onFilterData = (filter: any) => {
+        setFilteredData(filter)
+    }
+    
+
     return (
         <div className="flex flex-col gap-4">
-            {/* <div className="flex flex-row justify-between space-x-2">
-                <Input className="w-[400px]" placeholder="Search"></Input>
-                <div className="flex flex-row space-x-2">
-                    <Label htmlFor="terms">Date as of:</Label>
-                    <MonthYearPicker
-                        value={selectedDate}
-                        onChangeAction={setSelectedDate}
-                    />
-                    <Button className="w-auto self-end" onClick={() => downloadExcel(data, "table-data.xlsx")}>Export</Button>
-                </div>
-            </div> */}
             <div className="flex flex-col space-y-6">
-                {/* <div className="grid grid-cols-3 gap-4">
-                    <OffboardingChartPieInteractive />
-                    <div className="grid col-span-2">
+                <div className="w-auto self-end flex flex-row gap-2">
+                    <Label>Last Sync: {isLoading ? <Spinner /> : fetchedAt} </Label>
+                    <Button disabled={isSyncing} onClick={syncOffboarding}>Sync Data {isSyncing ? <Spinner /> : <RefreshCw />}</Button>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                    <OffboardingChartPieInteractive data={filteredData} isLoading={isLoading} />
+                    {/* <div className="grid col-span-2">
                         <OffboardingAnalyticsCard />
-                    </div>
-                </div> */}
-                <OffboardingDataTable columns={columns} data={data} isLoading={isLoading} />
+                    </div> */}
+                </div>
+                <OffboardingDataTable columns={columns} data={data} isLoading={isLoading} onFilteredDataChange={onFilterData} />
             </div>
         </div>
     )

@@ -1,171 +1,130 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { ChartConfig, ChartContainer, ChartStyle, ChartTooltip, ChartTooltipContent } from "../ui/chart"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { monthNames } from "@/lib/utils"
-import { Label, Pie, PieChart, Sector } from "recharts"
-import { PieSectorDataItem } from "recharts/types/polar/Pie"
-
-const desktopData = [
-  { month: "january", desktop: 186, fill: "var(--color-january)" },
-  { month: "february", desktop: 305, fill: "var(--color-february)" },
-  { month: "march", desktop: 237, fill: "var(--color-march)" },
-  { month: "april", desktop: 173, fill: "var(--color-april)" },
-  { month: "may", desktop: 209, fill: "var(--color-may)" },
-]
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../ui/chart"
+import { separationColorMap } from "@/lib/utils"
+import { Label, Pie, PieChart } from "recharts"
+import { Skeleton } from "../ui/skeleton"
 
 const chartConfig = {
-    visitors: {
-        label: "Visitors",
+    count: {
+        label: "Count",
     },
-    desktop: {
-        label: "Desktop",
-    },
-    mobile: {
-        label: "Mobile",
-    },
-    january: {
-        label: "January",
+    voluntary: {
+        label: "Voluntary",
         color: "var(--chart-1)",
     },
-    february: {
-        label: "February",
+    involuntary: {
+        label: "Involuntary",
         color: "var(--chart-2)",
     },
-    march: {
-        label: "March",
+    transfer: {
+        label: "Involuntary",
         color: "var(--chart-3)",
-    },
-    april: {
-        label: "April",
-        color: "var(--chart-4)",
-    },
-    may: {
-        label: "May",
-        color: "var(--chart-5)",
     },
 } satisfies ChartConfig
 
-export function OffboardingChartPieInteractive() {
-    const id = "pie-interactive"
-    const [activeMonth, setActiveMonth] = useState("january")
+interface OffboardingPieProps<TData, TValue> {
+    data: TData[]
+    isLoading: boolean,
+}
 
-    const activeIndex = useMemo(
-        () => desktopData.findIndex((item) => item.month === activeMonth),
-        [activeMonth]
-    )
-    const months = useMemo(() => desktopData.map((item) => item.month), [])
+export function OffboardingChartPieInteractive<TData, TValue>({
+    data,
+    isLoading,
+}: OffboardingPieProps<TData, TValue>) {
+
+    // ✅ Define your target categories (always included)
+    const baseCategories = ["voluntary", "involuntary", "transfer"]
+
+
+    const separationCategory = useMemo(() => {
+        if (!data || data.length === 0) return []
+
+        const counts = data.reduce((acc: any, curr: any) => {
+            const category = curr.separation_category?.toLowerCase()?.trim() || "unassigned"
+            acc[category] = (acc[category] || 0) + 1
+            return acc
+        }, {})
+
+        return baseCategories.map((category) => ({
+            separation_category: category,
+            count: counts[category] || 0,
+            fill: separationColorMap[category],
+        }))
+    }, [data])
+
 
     return (
-        <Card data-chart={id} className="flex flex-col">
-            <ChartStyle id={id} config={chartConfig} />
+        <Card className="flex flex-col">
             <CardHeader className="flex-row items-start space-y-0 pb-0">
                 <div className="grid gap-1">
-                    <CardTitle>Pie Chart - Interactive</CardTitle>
-                    <CardDescription>January - June 2024</CardDescription>
+                    <CardTitle>Separation Category</CardTitle>
                 </div>
-                <Select value={activeMonth} onValueChange={setActiveMonth}>
-                    <SelectTrigger
-                        className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
-                        aria-label="Select a value"
-                    >
-                        <SelectValue placeholder="Select month" />
-                    </SelectTrigger>
-                    <SelectContent align="end" className="rounded-xl">
-                        {months.map((key:string) => {
-                            const config = chartConfig[key as keyof typeof chartConfig]
-
-                            if (!config) {
-                                return null
-                            }
-
-                            return (
-                                <SelectItem
-                                    key={key}
-                                    value={key}
-                                    className="rounded-lg [&_span]:flex"
-                                >
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <span
-                                            className="flex h-3 w-3 shrink-0 rounded-xs"
-                                            style={{
-                                                backgroundColor: `var(--color-${key})`,
-                                            }}
-                                        />
-                                        {config?.label}
-                                    </div>
-                                </SelectItem>
-                            )
-                        })}
-                    </SelectContent>
-                </Select>
             </CardHeader>
-            <CardContent className="flex flex-1 justify-center pb-0">
-                <ChartContainer
-                    id={id}
-                    config={chartConfig}
-                    className="mx-auto aspect-square w-full max-w-[300px] min-h-[200px]"
-                >
-                    <PieChart>
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                        />
-                        <Pie
-                            data={desktopData}
-                            dataKey="desktop"
-                            nameKey="month"
-                            innerRadius={60}
-                            strokeWidth={5}
-                            activeIndex={activeIndex}
-                            activeShape={({
-                                outerRadius = 0,
-                                ...props
-                            }: PieSectorDataItem) => (
-                                <g>
-                                    <Sector {...props} outerRadius={outerRadius + 10} />
-                                    <Sector
-                                        {...props}
-                                        outerRadius={outerRadius + 25}
-                                        innerRadius={outerRadius + 12}
-                                    />
-                                </g>
-                            )}
-                        >
-                            <Label
-                                content={({ viewBox }) => {
-                                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                        return (
-                                            <text
-                                                x={viewBox.cx}
-                                                y={viewBox.cy}
-                                                textAnchor="middle"
-                                                dominantBaseline="middle"
-                                            >
-                                                <tspan
+            <CardContent className="flex flex-1 justify-center pb-0 min-h-[250px]">
+                {isLoading ? (
+                    <Skeleton className="h-[200px] w-[200px] rounded-full" />
+                ) : data.length === 0 ? (
+                    <p className="text-muted-foreground text-center mt-8">
+                        No separation records found.
+                    </p>
+                ) : (
+                    <ChartContainer
+                        config={chartConfig}
+                        className="mx-auto aspect-square w-full max-w-[300px] min-h-[200px]"
+                    >
+                        <PieChart>
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Pie
+                                data={separationCategory}
+                                dataKey="count"
+                                nameKey="separation_category"
+                                innerRadius={60}
+                                strokeWidth={5}
+                            >
+                                <Label
+                                    content={({ viewBox }) => {
+                                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                            return (
+                                                <text
                                                     x={viewBox.cx}
                                                     y={viewBox.cy}
-                                                    className="fill-foreground text-3xl font-bold"
+                                                    textAnchor="middle"
+                                                    dominantBaseline="middle"
                                                 >
-                                                    {desktopData[activeIndex].desktop.toLocaleString()}
-                                                </tspan>
-                                                <tspan
-                                                    x={viewBox.cx}
-                                                    y={(viewBox.cy || 0) + 24}
-                                                    className="fill-muted-foreground"
-                                                >
-                                                    Visitors
-                                                </tspan>
-                                            </text>
-                                        )
-                                    }
-                                }}
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        className="fill-foreground text-3xl font-bold"
+                                                    >
+                                                        {data.length.toLocaleString()}
+                                                    </tspan>
+                                                    <tspan
+                                                        x={viewBox.cx}
+                                                        y={(viewBox.cy || 0) + 24}
+                                                        className="fill-muted-foreground"
+                                                    >
+                                                        Total Separation
+                                                    </tspan>
+                                                </text>
+                                            )
+                                        }
+                                    }}
+                                />
+                            </Pie>
+
+                            <ChartLegend
+                                content={<ChartLegendContent
+                                />}
                             />
-                        </Pie>
-                    </PieChart>
-                </ChartContainer>
+                        </PieChart>
+                    </ChartContainer>
+                )}
             </CardContent>
 
         </Card>
