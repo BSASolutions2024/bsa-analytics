@@ -69,6 +69,11 @@ export const columns: ColumnDef<Offboarding>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="SLA" />
         ),
+        cell: ({ row }) => {
+            if (Number(row.getValue("sla")) <= 15)
+                return <Badge variant="destructive">{row.getValue("sla")}</Badge>
+            return <div className="min-w-[100px] truncate">{row.getValue("sla")}</div>
+        }
     },
     {
         accessorKey: "last_working_day",
