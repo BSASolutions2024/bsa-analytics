@@ -65,7 +65,14 @@ export function OffboardingChartPieInteractive<TData, TValue>({
             </CardHeader>
             <CardContent className="flex flex-1 justify-center pb-0 min-h-[250px]">
                 {isLoading ? (
-                    <Skeleton className="h-[200px] w-[200px] rounded-full" />
+                    <div className="flex flex-col items-center justify-center gap-8">
+                        <Skeleton className="h-[200px] w-[200px] rounded-full" />
+                        <div className="flex flex-row gap-4">
+                            <Skeleton className="h-5 w-[100px]" />
+                            <Skeleton className="h-5 w-[100px]" />
+                            <Skeleton className="h-5 w-[100px]" />
+                        </div>
+                    </div>
                 ) : data.length === 0 ? (
                     <p className="text-muted-foreground text-center mt-8">
                         No separation records found.

@@ -14,13 +14,13 @@ export function DateRangeFilter({ column }: { column: any }) {
         to: undefined,
     });
 
-    
+
     useEffect(() => {
         setIsMounted(true);
     }, []);
 
-    if (!isMounted) return null; 
-    
+    if (!isMounted) return null;
+
     const handleClear = (e: React.MouseEvent) => {
         e.stopPropagation(); // ✅ prevents opening the popover
         setDateRange({ from: undefined, to: undefined });
@@ -60,8 +60,15 @@ export function DateRangeFilter({ column }: { column: any }) {
                     mode="range"
                     selected={dateRange}
                     onSelect={(range: any) => {
-                        setDateRange(range);
-                        column.setFilterValue(range); // sets TanStack table filter value
+                        if (!range?.from) return; 
+
+                        const safeRange = {
+                            from: range.from,
+                            to: range.to ?? range.from,
+                        };
+
+                        setDateRange(safeRange);
+                        column.setFilterValue(safeRange); // sets TanStack table filter value
                     }}
                     numberOfMonths={2}
                 />

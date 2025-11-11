@@ -75,9 +75,9 @@ export default function OffboardingDashboard() {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                     <OffboardingChartPieInteractive data={filteredData} isLoading={isLoading} />
-                    {/* <div className="grid col-span-2">
-                        <OffboardingAnalyticsCard />
-                    </div> */}
+                    <div className="grid col-span-2">
+                        <OffboardingAnalyticsCard data={filteredData} isLoading={isLoading}/>
+                    </div>
                 </div>
                 <OffboardingDataTable columns={columns} data={data} isLoading={isLoading} onFilteredDataChange={onFilterData} />
             </div>

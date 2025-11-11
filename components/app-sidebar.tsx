@@ -1,5 +1,5 @@
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
-import { DoorOpen, LogOut, QrCode } from "lucide-react"
+import { DoorOpen, HouseWifi, LogOut, QrCode } from "lucide-react"
 import Link from "next/link"
 
 const items = [
@@ -7,6 +7,11 @@ const items = [
     title: "Offboarding",
     url: "offboarding",
     icon: DoorOpen,
+  },
+  {
+    title: "Work Arrangement",
+    url: "work-arrangement",
+    icon: HouseWifi,
   },
   {
     title: "Surveys",
