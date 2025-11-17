@@ -1,5 +1,6 @@
 import NextAuth from "next-auth"
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id"
+import { prisma } from "./lib/prisma";
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
         MicrosoftEntraID({
@@ -12,4 +13,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session: { strategy: "jwt", maxAge: 60 * 60 },
     trustHost: true,
     secret: process.env.AUTH_SECRET,
+    // callbacks: {
+    //     async jwt({ token, account, profile }) {
+    //         if (profile?.email) {
+    //             const user = await prisma.user.findUnique({
+    //                 where: { email: profile.email },
+    //                 include: {
+    //                     role: {
+    //                         include: { permissions: { include: { permission: true } } },
+    //                     },
+    //                 },
+    //             });
+
+    //             if (user) {
+    //                 token.role = user.role?.name || "user";
+    //                 token.permissions = user.role?.permissions.map((p) => p.permission.name) || [];
+    //             }
+    //         }
+    //         return token;
+    //     },
+    //     async session({ session, token }) {
+    //         if (session.user) {
+    //             session.user.role = token.role;
+    //             session.user.permissions = token.permissions;
+    //         }
+    //         return session;
+    //     },
+    // },
 })

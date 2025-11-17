@@ -39,7 +39,9 @@ export default function RootLayout({
           <SidebarProvider defaultOpen={false}>
             <AppSidebar />
             <SidebarWrapper>
-              {children}
+              <div className="min-h-screen bg-background text-foreground">
+                {children}
+              </div>
             </SidebarWrapper>
           </SidebarProvider>
         </SessionProvider>

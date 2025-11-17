@@ -1,6 +1,6 @@
 "use client"
 import { TrendingUp } from "lucide-react"
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
 import {
     Card,
     CardContent,
@@ -17,18 +17,11 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useEffect, useState } from "react"
 
-const chartData = [
-    { month: "January", wfh: 186, onsite: 80, hybrid: 80},
-    { month: "February", wfh: 305, onsite: 200, hybrid: 80 },
-    { month: "March", wfh: 237, onsite: 120, hybrid: 80 },
-    { month: "April", wfh: 73, onsite: 190, hybrid: 80 },
-    { month: "May", wfh: 209, onsite: 130, hybrid: 80 },
-    { month: "June", wfh: 214, onsite: 140, hybrid: 80 },
-]
 const chartConfig = {
     wfh: {
-        label: "Work From Home",
+        label: "WFH",
         color: "var(--chart-1)",
     },
     onsite: {
@@ -36,12 +29,39 @@ const chartConfig = {
         color: "var(--chart-2)",
     },
     hybrid: {
-        label: "On-Site",
+        label: "Hybrid",
         color: "var(--chart-3)",
     },
 } satisfies ChartConfig
 
-export default function WorkArrangementLineChart() {
+interface WorkArrangementLineProps<TData, TValue> {
+    data: TData[]
+    isLoading: boolean,
+}
+
+export default function WorkArrangementLineChart<TData, TValue>({
+    data,
+    isLoading
+}: WorkArrangementLineProps<TData, TValue>) {
+    const [trendPercentage, setTrendPercentage] = useState<string>()
+    // Get the last two months
+    const getTrend = () => {
+        const prev: any = data[data.length - 2];
+        const current: any = data[data.length - 1];
+
+        const overallCombinedTrend = (
+            ((current.wfh + current.hybrid + current.onsite) -
+                (prev.wfh + prev.hybrid + prev.onsite)) /
+            (prev.wfh + prev.hybrid + prev.onsite) * 100
+        ).toFixed(2) + '%';
+
+        setTrendPercentage(overallCombinedTrend)
+    }
+
+    useEffect(() => {
+        getTrend()
+    }, [data])
+
     return (
         <Card>
             <CardHeader>
@@ -51,7 +71,7 @@ export default function WorkArrangementLineChart() {
                 <ChartContainer config={chartConfig} className="w-full h-[200px]">
                     <LineChart
                         accessibilityLayer
-                        data={chartData}
+                        data={data}
                         margin={{
                             left: 12,
                             right: 12,
@@ -98,10 +118,7 @@ export default function WorkArrangementLineChart() {
                 <div className="flex w-full items-start gap-2 text-sm">
                     <div className="grid gap-2">
                         <div className="flex items-center gap-2 leading-none font-medium">
-                            Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-                        </div>
-                        <div className="text-muted-foreground flex items-center gap-2 leading-none">
-                            Showing total visitors for the last 6 months
+                            Trending up by {trendPercentage} this month <TrendingUp className="h-4 w-4" />
                         </div>
                     </div>
                 </div>

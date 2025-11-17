@@ -30,7 +30,6 @@ export function OffboardingAnalyticsCard<TData, TValue>({
         return Number(percentage.toFixed(2))
     }, [data])
 
-    console.log(workflowPercentage)
 
     return (
         <div className="grid grid-cols-2 gap-4">

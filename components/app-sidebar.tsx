@@ -1,4 +1,5 @@
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
+"use client"
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { DoorOpen, HouseWifi, LogOut, QrCode } from "lucide-react"
 import Link from "next/link"
 
@@ -20,6 +21,8 @@ const items = [
   },
 ]
 export function AppSidebar() {
+  const { setOpen } = useSidebar()
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -30,7 +33,7 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url}>
+                    <Link href={item.url} onClick={() => setOpen(false)}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>

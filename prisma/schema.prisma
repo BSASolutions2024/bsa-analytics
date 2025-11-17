@@ -13,8 +13,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique
+  name      String
+  roleId    String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  role Role? @relation("UserToRole", fields: [roleId], references: [id])
+}
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  user        User[]           @relation("UserToRole")
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId       String @db.Uuid
+  permissionId String @db.Uuid
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId]) // composite primary key
+  @@index([roleId])
+  @@index([permissionId])
+}
+
 model OffboardingAnalytics {
-  id                            String    @id @default(uuid()) @db.Uuid
+  id                            String   @id @default(uuid()) @db.Uuid
   source                        String?
   period                        String?
   offboarding_report_request_id String
@@ -22,8 +66,17 @@ model OffboardingAnalytics {
   workflow_report_request_id    String
   workflow_report_json          Json
   data                          Json
-  fetchedAt                     DateTime  @default(now())
-  updateAt                      DateTime  @updatedAt
+  fetchedAt                     DateTime @default(now())
+  updateAt                      DateTime @updatedAt
 }
 
-
+model WorkArrangementAnalytics {
+  id                                     String   @id @default(uuid()) @db.Uuid
+  work_arrangement_report_request_id     String
+  work_arrangement_report_json           Json
+  change_arrangement_report_request_id   String
+  change_arrangement_report_request_json Json
+  data                                   Json
+  fetchedAt                              DateTime @default(now())
+  updatedAt                              DateTime @updatedAt
+}

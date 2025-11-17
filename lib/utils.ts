@@ -80,3 +80,37 @@ export const separationColorMap: Record<string, string> = {
   involuntary: "var(--color-involuntary)",
   transfer: "var(--color-transfer)",
 }
+
+// Convert "01-07-2020" → Date object (DD-MM-YYYY format)
+export function parseDMY(dateStr: string) {
+  const [day, month, year] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+
+// Format date to YYYY-MM
+export function toYearMonth(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+// Generate list of months from joinDate → endDate
+export function allMonthsFrom(startDate: Date, endDate = new Date()) {
+  const start = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+  const end = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+
+  let cursor = new Date(start);
+  const months = [];
+
+  while (cursor <= end) {
+    months.push(toYearMonth(cursor));
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  return months;
+}
+
+// Check if two dates are in the same month
+export function isSameMonth(date1: string, yearMonth: string) {
+  const d = parseDMY(date1);
+  return toYearMonth(d) === yearMonth;
+}

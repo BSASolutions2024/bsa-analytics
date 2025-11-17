@@ -56,7 +56,8 @@ export default auth(async (req) => {
 export const config = {
     matcher: [
         "/api/:path*",
-        "/login",
-        "/offboarding"
+        "/",
+        "/offboarding",
+        "/work-arrangement"
     ]
 }
