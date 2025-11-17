@@ -17,7 +17,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 const chartConfig = {
     wfh: {
@@ -43,9 +43,9 @@ export default function WorkArrangementLineChart<TData, TValue>({
     data,
     isLoading
 }: WorkArrangementLineProps<TData, TValue>) {
-    const [trendPercentage, setTrendPercentage] = useState<string>()
     // Get the last two months
-    const getTrend = () => {
+    const trendPercentage = useMemo(() => {
+        if (!data || data.length === 0) return []
         const prev: any = data[data.length - 2];
         const current: any = data[data.length - 1];
 
@@ -55,12 +55,9 @@ export default function WorkArrangementLineChart<TData, TValue>({
             (prev.wfh + prev.hybrid + prev.onsite) * 100
         ).toFixed(2) + '%';
 
-        setTrendPercentage(overallCombinedTrend)
-    }
-
-    useEffect(() => {
-        getTrend()
+        return overallCombinedTrend
     }, [data])
+
 
     return (
         <Card>
