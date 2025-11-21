@@ -54,7 +54,29 @@ export const ideaVaultColumns: ColumnDef<IdeaVault>[] = [
     },
     {
         accessorKey: 'response',
-        header: "Response"
+        header: "Response",
+        cell: ({ row }) => {
+            const [expanded, setExpanded] = useState(false);
+
+            // Get the value safely and fallback to empty string
+            const rawText = row.getValue("response");
+            const text = typeof rawText === "string" ? rawText : "";
+
+            return (
+                <div
+                    className="w-[300px] cursor-pointer"
+                    onClick={() => setExpanded(!expanded)}
+                >
+                    <p className={!expanded ? "truncate" : "whitespace-normal"}>
+                        {text}
+                    </p>
+
+                    {!expanded && text.length > 50 && (
+                        <span className="text-blue-600 text-xs">See more</span>
+                    )}
+                </div>
+            );
+        }
     },
     {
         accessorKey: 'total_running_time',

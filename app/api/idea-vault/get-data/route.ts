@@ -36,7 +36,15 @@ export async function GET() {
                 department_owner: result["Category"],
                 completion_date: submittedAt
             }
-        })
+        }).sort((a, b) => {
+            const parseDate = (d: string) => {
+                if (!d) return 0;
+                const [day, month, year] = d.split("-");
+                return new Date(`${year}-${month}-${day}`).getTime();
+            };
+
+            return parseDate(b.date_received) - parseDate(a.date_received);
+        });
 
         return NextResponse.json({
             success: true,
