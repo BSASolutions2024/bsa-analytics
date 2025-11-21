@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
-const whitelist = process.env.WHITELISTED_EMAILS!.split(",");
+// const whitelist = process.env.WHITELISTED_EMAILS!.split(",");
 
 export default auth(async (req) => {
     const { pathname } = req.nextUrl;
@@ -41,14 +41,14 @@ export default auth(async (req) => {
         return NextResponse.redirect(signInUrl);
     }
 
-    if (!whitelist.includes(token.email!)) {
-        const res = new NextResponse("Unauthorized", { status: 401 });
+    // if (!whitelist.includes(token.email!)) {
+    //     const res = new NextResponse("Unauthorized", { status: 401 });
 
-        // ❌ Clear the session cookie (logs out the user)
-        res.cookies.set(cookieKey, "", { maxAge: -1 });
+    //     // ❌ Clear the session cookie (logs out the user)
+    //     res.cookies.set(cookieKey, "", { maxAge: -1 });
 
-        return res;
-    }
+    //     return res;
+    // }
 
     return NextResponse.next();
 })
