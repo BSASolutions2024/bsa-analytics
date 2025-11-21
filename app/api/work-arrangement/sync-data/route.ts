@@ -34,7 +34,7 @@ export async function GET() {
             date: c["Initation Date"],
             // ⚠️ You MUST map this based on actual request type (Hybrid? WFH?)
             // For now assuming Hybrid/WFH requests always become Hybrid
-            newArrangement: "Hybrid"
+            newArrangement: c["Current Work Arrangement"]
         }));
 
         // Build trend month-by-month

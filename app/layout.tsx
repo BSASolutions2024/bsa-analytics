@@ -37,12 +37,13 @@ export default function RootLayout({
       >
         <SessionProvider>
           <SidebarProvider defaultOpen={false}>
-            <AppSidebar />
+            {children}
+            {/* <AppSidebar />
             <SidebarWrapper>
-              <div className="min-h-screen bg-background text-foreground">
+              <div className="w-full min-h-screen bg-background text-foreground">
                 {children}
               </div>
-            </SidebarWrapper>
+            </SidebarWrapper> */}
           </SidebarProvider>
         </SessionProvider>
         <Toaster />

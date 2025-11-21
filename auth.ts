@@ -13,31 +13,49 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session: { strategy: "jwt", maxAge: 60 * 60 },
     trustHost: true,
     secret: process.env.AUTH_SECRET,
-    // callbacks: {
-    //     async jwt({ token, account, profile }) {
-    //         if (profile?.email) {
-    //             const user = await prisma.user.findUnique({
-    //                 where: { email: profile.email },
-    //                 include: {
-    //                     role: {
-    //                         include: { permissions: { include: { permission: true } } },
-    //                     },
-    //                 },
-    //             });
+    callbacks: {
+        async signIn({ profile }) {
+            // No email = block early
+            if (!profile?.email) return "/unauthorized";
 
-    //             if (user) {
-    //                 token.role = user.role?.name || "user";
-    //                 token.permissions = user.role?.permissions.map((p) => p.permission.name) || [];
-    //             }
-    //         }
-    //         return token;
-    //     },
-    //     async session({ session, token }) {
-    //         if (session.user) {
-    //             session.user.role = token.role;
-    //             session.user.permissions = token.permissions;
-    //         }
-    //         return session;
-    //     },
-    // },
+            // Check database user
+            const user = await prisma.user.findUnique({
+                where: { email: profile.email }
+            });
+
+            // ❌ Not in the database → redirect to unauthorized page
+            if (!user) {
+                return "/unauthorized";
+            }
+
+            // Otherwise allow login
+            return true;
+        },
+        
+        async jwt({ token, user }) {
+            if (user?.email) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { email: user.email },
+                    include: {
+                        role: {
+                            include: { permissions: { include: { permission: true } } },
+                        },
+                    },
+                });
+
+                if (user) {
+                    token.role = dbUser?.role?.name || "user";
+                    token.permissions = dbUser?.role?.permissions.map((p) => p.permission.name) || [];
+                }
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (session.user) {
+                session.user.role = token.role;
+                session.user.permissions = token.permissions;
+            }
+            return session;
+        },
+    },
 })

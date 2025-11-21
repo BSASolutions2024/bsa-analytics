@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { formatDate } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
 export async function GET() {

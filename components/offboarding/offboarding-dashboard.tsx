@@ -1,6 +1,6 @@
 "use client"
-import { columns, Offboarding } from "@/app/offboarding/columns";
-import { OffboardingDataTable } from "@/app/offboarding/data-table";
+import { columns, Offboarding } from "@/app/(dashboard)/offboarding/columns";
+import { OffboardingDataTable } from "@/app/(dashboard)/offboarding/data-table";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { downloadExcel, monthNames } from "@/lib/utils";

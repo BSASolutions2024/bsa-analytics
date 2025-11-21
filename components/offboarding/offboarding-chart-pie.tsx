@@ -93,6 +93,7 @@ export function OffboardingChartPieInteractive<TData, TValue>({
                                 nameKey="separation_category"
                                 innerRadius={60}
                                 strokeWidth={5}
+                                label
                             >
                                 <Label
                                     content={({ viewBox }) => {

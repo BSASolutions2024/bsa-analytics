@@ -1,16 +1,22 @@
 "use client"
 
-import { usePathname } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 import { Separator } from "./ui/separator";
 import { SidebarInset, SidebarTrigger } from "./ui/sidebar";
 import Link from "next/link";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
+import { useSession } from "next-auth/react";
+import { User } from "next-auth";
 
 export default function SidebarWrapper({ children }: { children: React.ReactNode; }) {
     const pathname = usePathname();
     const segments = pathname.split("/").filter(Boolean)
 
+    const { data: session } = useSession()
+    const user = session?.user as User
+
     if (pathname === "/") return <>{children}</>
+
     return (
         <SidebarInset className="flex-1 overflow-x-hidden overflow-y-auto">
             <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">

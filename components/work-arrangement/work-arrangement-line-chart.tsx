@@ -70,6 +70,7 @@ export default function WorkArrangementLineChart<TData, TValue>({
                         accessibilityLayer
                         data={data}
                         margin={{
+                            top: 20,
                             left: 12,
                             right: 12,
                         }}
@@ -87,23 +88,50 @@ export default function WorkArrangementLineChart<TData, TValue>({
                             dataKey="onsite"
                             type="monotone"
                             stroke="var(--color-onsite)"
-                            strokeWidth={2}
-                            dot={false}
-                        />
+                            strokeWidth={1}
+                            dot={{
+                                fill: "var(--color-onsite)",
+                            }}
+                        >
+                            <LabelList
+                                position="top"
+                                offset={12}
+                                className="fill-foreground"
+                                fontSize={12}
+                            />
+                        </Line>
                         <Line
                             dataKey="wfh"
                             type="monotone"
                             stroke="var(--color-wfh)"
-                            strokeWidth={2}
-                            dot={false}
-                        />
+                            strokeWidth={1}
+                            dot={{
+                                fill: "var(--color-wfh)",
+                            }}
+                        >
+                            <LabelList
+                                position="top"
+                                offset={12}
+                                className="fill-foreground"
+                                fontSize={12}
+                            />
+                        </Line>
                         <Line
                             dataKey="hybrid"
                             type="monotone"
                             stroke="var(--color-hybrid)"
-                            strokeWidth={2}
-                            dot={false}
-                        />
+                            strokeWidth={1}
+                            dot={{
+                                fill: "var(--color-hybrid)",
+                            }}
+                        >
+                            <LabelList
+                                position="bottom"
+                                offset={12}
+                                className="fill-foreground"
+                                fontSize={12}
+                            />
+                        </Line>
                         <ChartLegend
                             content={<ChartLegendContent
                             />}

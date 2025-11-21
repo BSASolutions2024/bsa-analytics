@@ -114,3 +114,38 @@ export function isSameMonth(date1: string, yearMonth: string) {
   const d = parseDMY(date1);
   return toYearMonth(d) === yearMonth;
 }
+
+export function daysBetween(a: string, b: string): number {
+  const parse = (dateStr: string): Date => {
+    const [day, month, year] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const dateA = parse(a);
+  const dateB = parse(b);
+
+  dateA.setHours(0, 0, 0, 0);
+  dateB.setHours(0, 0, 0, 0);
+
+  return Math.floor((dateB.getTime() - dateA.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+export function parseDDMMYYYY(dateStr: string) {
+    if (!dateStr) return null;
+
+    const [datePart, timePart] = dateStr.split(" ");
+    const [dd, mm, yyyy] = datePart.split("-").map(Number);
+
+    let hours = 0, minutes = 0, seconds = 0;
+
+    if (timePart) {
+        [hours, minutes, seconds] = timePart.split(":").map(Number);
+    }
+
+    return new Date(yyyy, mm - 1, dd, hours, minutes, seconds);
+}
+
+export function extractDate(dateTimeStr: string | null): string | null {
+    if (!dateTimeStr) return null;
+    return dateTimeStr.split(" ")[0]; // "20-11-2025 12:46:35" → "20-11-2025"
+}

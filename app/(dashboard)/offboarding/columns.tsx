@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { formatDate, parseDateString } from "@/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { daysBetween, formatDate, parseDateString } from "@/lib/utils"
 import { ColumnDef } from "@tanstack/react-table"
 import { BadgeCheckIcon, BadgeMinus } from "lucide-react"
 
@@ -166,6 +167,40 @@ export const columns: ColumnDef<Offboarding>[] = [
     },
     {
         accessorKey: "date_of_last_pay_release",
-        header: "Date of Last Pay Release"
+        header: "Date of Last Pay Release",
+        cell: ({ row }) => {
+            let lastPay = row.getValue("date_of_last_pay_release") as string;
+            const lastWorking = row.getValue("last_working_day") as string;
+
+            if (!lastWorking) return <p>No LWD</p>; // safety
+
+            // Use today if "No Data"
+            const baseDate = lastPay === "No Data" ? formatDate(new Date()) : lastPay;
+
+            // Calculate difference
+            const diff = daysBetween(baseDate, lastWorking);
+
+            // If more than 15 days late (negative)
+            if (diff * -1 > 15) {
+                const badge = <Badge variant="destructive">{baseDate}</Badge>;
+
+                // Show tooltip only if lastPay exists
+                if (lastPay !== "No Data") {
+                    return (
+                        <Tooltip>
+                            <TooltipTrigger asChild className="cursor-pointer">{badge}</TooltipTrigger>
+                            <TooltipContent>
+                                <p>{diff * -1} day{Math.abs(diff) !== 1 ? "s" : ""} from LWD</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    );
+                }
+
+                return badge;
+            }
+
+            // Default return
+            return <p>{baseDate}</p>;
+        }
     }
 ]
